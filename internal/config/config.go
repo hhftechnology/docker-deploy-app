@@ -8,16 +8,16 @@ import (
 
 // Config holds the application configuration
 type Config struct {
-	Server     ServerConfig     `yaml:"server"`
-	Docker     DockerConfig     `yaml:"docker"`
-	Newt       NewtConfig       `yaml:"newt"`
+	Server      ServerConfig      `yaml:"server"`
+	Docker      DockerConfig      `yaml:"docker"`
+	Newt        NewtConfig        `yaml:"newt"`
 	Marketplace MarketplaceConfig `yaml:"marketplace"`
-	Backup     BackupConfig     `yaml:"backup"`
-	GitHub     GitHubConfig     `yaml:"github"`
-	Database   DatabaseConfig   `yaml:"database"`
-	Templates  TemplatesConfig  `yaml:"templates"`
-	Logging    LoggingConfig    `yaml:"logging"`
-	Security   SecurityConfig   `yaml:"security"`
+	Backup      BackupConfig      `yaml:"backup"`
+	GitHub      GitHubConfig      `yaml:"github"`
+	Database    DatabaseConfig    `yaml:"database"`
+	Templates   TemplatesConfig   `yaml:"templates"`
+	Logging     LoggingConfig     `yaml:"logging"`
+	Security    SecurityConfig    `yaml:"security"`
 }
 
 type ServerConfig struct {
@@ -38,15 +38,15 @@ type DockerConfig struct {
 }
 
 type NewtConfig struct {
-	Enabled      bool              `yaml:"enabled"`
-	AutoInject   bool              `yaml:"auto_inject"`
-	DefaultImage string            `yaml:"default_image"`
-	Validation   ValidationConfig  `yaml:"validation"`
+	Enabled       bool              `yaml:"enabled"`
+	AutoInject    bool              `yaml:"auto_inject"`
+	DefaultImage  string            `yaml:"default_image"`
+	Validation    ValidationConfig  `yaml:"validation"`
 	DefaultConfig DefaultNewtConfig `yaml:"default_config"`
 }
 
 type ValidationConfig struct {
-	Enforce           bool `yaml:"enforce"`
+	Enforce            bool `yaml:"enforce"`
 	RequireHealthCheck bool `yaml:"require_health_check"`
 }
 
@@ -74,9 +74,9 @@ type BackupConfig struct {
 }
 
 type BackupStorageConfig struct {
-	Type string    `yaml:"type"`
-	Path string    `yaml:"path"`
-	S3   S3Config  `yaml:"s3"`
+	Type string   `yaml:"type"`
+	Path string   `yaml:"path"`
+	S3   S3Config `yaml:"s3"`
 }
 
 type S3Config struct {
@@ -123,10 +123,10 @@ type DatabaseConfig struct {
 }
 
 type TemplatesConfig struct {
-	RepoURL               string   `yaml:"repo_url"`
-	Branch                string   `yaml:"branch"`
-	CacheDuration         int      `yaml:"cache_duration"`
-	AutoVerifyPublishers  []string `yaml:"auto_verify_publishers"`
+	RepoURL              string   `yaml:"repo_url"`
+	Branch               string   `yaml:"branch"`
+	CacheDuration        int      `yaml:"cache_duration"`
+	AutoVerifyPublishers []string `yaml:"auto_verify_publishers"`
 }
 
 type LoggingConfig struct {
@@ -136,16 +136,16 @@ type LoggingConfig struct {
 }
 
 type SecurityConfig struct {
-	AuthEnabled    bool           `yaml:"auth_enabled"`
-	APIKey         string         `yaml:"api_key"`
-	SessionTimeout int            `yaml:"session_timeout"`
-	EncryptSecrets bool           `yaml:"encrypt_secrets"`
+	AuthEnabled    bool            `yaml:"auth_enabled"`
+	APIKey         string          `yaml:"api_key"`
+	SessionTimeout int             `yaml:"session_timeout"`
+	EncryptSecrets bool            `yaml:"encrypt_secrets"`
 	RateLimiting   RateLimitConfig `yaml:"rate_limiting"`
 }
 
 type RateLimitConfig struct {
-	Enabled            bool `yaml:"enabled"`
-	RequestsPerMinute  int  `yaml:"requests_per_minute"`
+	Enabled           bool `yaml:"enabled"`
+	RequestsPerMinute int  `yaml:"requests_per_minute"`
 }
 
 // Load loads configuration from environment variables with defaults
@@ -169,7 +169,7 @@ func Load() (*Config, error) {
 			AutoInject:   getEnvBool("NEWT_AUTO_INJECT", true),
 			DefaultImage: getEnv("NEWT_DEFAULT_IMAGE", "fosrl/newt:latest"),
 			Validation: ValidationConfig{
-				Enforce:           getEnvBool("NEWT_VALIDATION_ENFORCE", true),
+				Enforce:            getEnvBool("NEWT_VALIDATION_ENFORCE", true),
 				RequireHealthCheck: getEnvBool("NEWT_REQUIRE_HEALTH_CHECK", true),
 			},
 			DefaultConfig: DefaultNewtConfig{
@@ -235,12 +235,10 @@ func Load() (*Config, error) {
 			BackupInterval: getEnvInt("DATABASE_BACKUP_INTERVAL", 3600),
 		},
 		Templates: TemplatesConfig{
-			RepoURL:       getEnv("TEMPLATES_REPO_URL", "https://github.com/yourusername/docker-templates"),
-			Branch:        getEnv("TEMPLATES_BRANCH", "main"),
-			CacheDuration: getEnvInt("TEMPLATES_CACHE_DURATION", 3600),
-			AutoVerifyPublishers: getEnvSlice("TEMPLATES_AUTO_VERIFY_PUBLISHERS", []string{
-				"docker", "bitnami", "linuxserver",
-			}),
+			RepoURL:              getEnv("TEMPLATES_REPO_URL", ""),
+			Branch:               getEnv("TEMPLATES_BRANCH", "main"),
+			CacheDuration:        getEnvInt("TEMPLATES_CACHE_DURATION", 300),
+			AutoVerifyPublishers: getEnvSlice("TEMPLATES_AUTO_VERIFY_PUBLISHERS", []string{}),
 		},
 		Logging: LoggingConfig{
 			Level:  getEnv("LOG_LEVEL", "info"),
@@ -250,7 +248,7 @@ func Load() (*Config, error) {
 		Security: SecurityConfig{
 			AuthEnabled:    getEnvBool("AUTH_ENABLED", false),
 			APIKey:         getEnv("API_KEY", ""),
-			SessionTimeout: getEnvInt("SESSION_TIMEOUT", 86400),
+			SessionTimeout: getEnvInt("SESSION_TIMEOUT", 3600),
 			EncryptSecrets: getEnvBool("ENCRYPT_SECRETS", true),
 			RateLimiting: RateLimitConfig{
 				Enabled:           getEnvBool("RATE_LIMITING_ENABLED", true),
